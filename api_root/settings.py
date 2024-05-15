@@ -31,7 +31,7 @@ SECRET_KEY = 'django-insecure-b^=vs3j^@^-!jg5ubpe-tpc434a_+$_bt&c2*5krc$^n%-ednu
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['mooview.vercel.app', '*'] #permite qualquer domínio acessar a api
+ALLOWED_HOSTS = ['.vercel.app'] #permite qualquer domínio acessar a api
 
 
 # Application definition
