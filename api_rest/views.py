@@ -95,17 +95,15 @@ def user_manager(request):
 
 @api_view(['POST'])
 def movie_create(request):
-  try:
-    if(request.method == 'POST'):
-      new_movie = request.data
-      serializer = MovieSerializer(data=new_movie)
+  if request.method == 'POST':
+    serializer = MovieSerializer(data=request.data)
 
-      if(serializer.is_valid()):
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-      return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-  except:
-    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    if serializer.is_valid():
+      serializer.save()
+      return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+  return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET'])
 def movie_get(request):
