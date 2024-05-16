@@ -14,9 +14,18 @@ from pathlib import Path
 import os
 import environ
 import dj_database_url
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 
 env = environ.Env()
+
+cloudinary.config(
+  cloud_name = "ddnk5aamu", 
+  api_key = "588527453375746", 
+  api_secret = "M7KJs0TgyezbvOxgef_JLffEd1c"
+)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,9 +38,9 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = 'django-insecure-b^=vs3j^@^-!jg5ubpe-tpc434a_+$_bt&c2*5krc$^n%-ednu'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool('DEBUG', default=True)
 
-ALLOWED_HOSTS = ['.vercel.app', '*'] #permite qualquer domínio acessar a api
+ALLOWED_HOSTS = ['.vercel.app', 'localhost', '127.0.0.1'] if not DEBUG else ['*']
 
 
 # Application definition

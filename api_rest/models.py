@@ -2,7 +2,8 @@
 
 from django.db import models
 import random
-
+from django.db import models
+from cloudinary.models import CloudinaryField
 
 def upload_image(instance, filename):
     return f'{random.randint(0,100000)}/{filename}'
@@ -38,7 +39,7 @@ class Movie(models.Model):
     link = models.CharField(max_length=100)
     production = models.CharField(max_length=100)
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to=upload_image, null=True, blank=True)
+    image = CloudinaryField('image', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

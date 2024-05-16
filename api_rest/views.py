@@ -9,7 +9,7 @@ from rest_framework import status
 
 from .models import User, Movie, Genre, Rating
 from .seralizer import UserSerializer, MovieSerializer, GenreSerializer, RatingSerializer
-
+from cloudinary.uploader import upload
 import json
 
 # @api_view(['GET'])
@@ -96,13 +96,20 @@ def user_manager(request):
 @api_view(['POST'])
 def movie_create(request):
   if request.method == 'POST':
+
+    if 'image' in request.FILES:
+      image = request.FILES['image']
+      result = upload(image)
+      request.data['image'] = result['url']
+    
     serializer = MovieSerializer(data=request.data)
 
     if serializer.is_valid():
       serializer.save()
       return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+    else:
+      return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+  
   return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET'])
