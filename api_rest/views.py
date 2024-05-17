@@ -3,7 +3,8 @@ from django.http import HttpResponse, JsonResponse
 # Create your views here.
 
 
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -12,14 +13,14 @@ from .seralizer import UserSerializer, MovieSerializer, GenreSerializer, RatingS
 from cloudinary.uploader import upload
 import json
 
-# @api_view(['GET'])
-# def get_users(request):
-#   if(request.method == 'GET'):
-#     users = User.objects.all() #traz todos os usuários
+@api_view(['GET'])
+def get_users(request):
+  if(request.method == 'GET'):
+    users = User.objects.all() #traz todos os usuários
 
-#     serializer = UserSerializer(users, many=True)
-#     return Response(serializer.data)
-#   return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'Erro ao buscar usuários'})
+    serializer = UserSerializer(users, many=True)
+    return Response(serializer.data)
+  return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'Erro ao buscar usuários'})
 
 # @api_view(['GET'])
 # def get_user(request, id):
@@ -34,6 +35,7 @@ import json
 
 
 @api_view(['POST', 'GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
 def user_manager(request):
   print(request.method)
   if(request.method == 'GET'):
@@ -94,6 +96,7 @@ def user_manager(request):
 #Movie
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def movie_create(request):
   if request.method == 'POST':
 
@@ -127,6 +130,7 @@ def movie_get(request):
 #Genre
 
 @api_view(['POST', 'GET'])
+@permission_classes([IsAuthenticated])
 def genre_create(request):
   print('a')
   try:
@@ -158,6 +162,7 @@ def genre_get(request):
     return Response(status=status.HTTP_404_NOT_FOUND)
   
 @api_view(['GET', 'POST', 'PUT'])
+@permission_classes([IsAuthenticated])
 def rating(request):
   if(request.method == 'GET'):
     try:

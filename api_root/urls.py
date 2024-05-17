@@ -21,5 +21,7 @@ from .settings import MEDIA_ROOT, MEDIA_URL
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('api_rest.urls'), name="api_rest_urls")
+    path('api/', include('api_rest.urls'), name="api_rest_urls"),
+    path('api/account/', include('dj_rest_auth.urls')),
+    path('api/account/registration/', include('dj_rest_auth.registration.urls'))
 ]
