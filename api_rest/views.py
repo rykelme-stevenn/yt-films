@@ -8,89 +8,44 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
-from .models import User, Movie, Genre, Rating
+from .models import Movie, Genre, Rating
+from django.contrib.auth.models import User
 from .seralizer import UserSerializer, MovieSerializer, GenreSerializer, RatingSerializer
 from cloudinary.uploader import upload
 import json
 
 @api_view(['GET'])
-def get_users(request):
-  if(request.method == 'GET'):
-    users = User.objects.all() #traz todos os usuários
-
-    serializer = UserSerializer(users, many=True)
-    return Response(serializer.data)
-  return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'Erro ao buscar usuários'})
-
-# @api_view(['GET'])
-# def get_user(request, id):
-#   if(request.method == 'GET'):
-#     try:
-#       user = User.objects.get(pk=id) #traz um usuário específico de acordo com o id(pk=primary key)
-#       serializer = UserSerializer(user, many=False)
-#       return Response(serializer.data)
-#     except:
-#       return Response(status=status.HTTP_404_NOT_FOUND)
-#   return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['POST', 'GET', 'PUT', 'DELETE'])
 @permission_classes([IsAuthenticated])
-def user_manager(request):
-  print(request.method)
+def user_get(request):
   if(request.method == 'GET'):
-    try: 
-      if(request.GET['user']): #se tiver um usuário específico no parametro da url
-        try:
-          user_id = request.GET['user'] #pegar o id do usuário na url
-          user = User.objects.get(pk=user_id)
+    print(request.GET['email'])
+    param_user = request.GET.get('user', None)
+    param_email = request.GET.get('email', None)
+    if(param_user): #se tiver um usuário específico no parametro da url
+      try:
+        user_id = request.GET['user'] #pegar o id do usuário na url
+        user = User.objects.get(pk=user_id)
 
-          serializer = UserSerializer(user, many=False)
-          return Response(serializer.data, status=status.HTTP_200_OK)
-        except:
-          return Response(status=status.HTTP_404_NOT_FOUND)
-      else:
-        users = User.objects.all()
-        serializer = UserSerializer(users, many=True) 
-        return (serializer.data)
-    except:
-      return Response(status=status.HTTP_404_NOT_FOUND)
-    
-  if(request.method == 'POST'):
-    new_user = request.data
-    serializer = UserSerializer(data=new_user)
-
-    if(serializer.is_valid()): #Verifica se os dados que estão sendo passados são válidos
-      serializer.save() #Salva os dados no banco de dados
-      return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-  if(request.method == 'PUT'):
-    try:
-      user_id = request.GET['user']
-      update_user = User.objects.get(pk=user_id)
+        serializer = UserSerializer(user, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+      except:
+        return Response(status=status.HTTP_404_NOT_FOUND)
       
-      serializer = UserSerializer(update_user, data=request.data)
+    elif(param_email):
+      try:
+        email_param = request.GET['email'] #pegar o id do usuário na url
+        user = User.objects.get(email=email_param)
 
-      if(serializer.is_valid()):
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_202_OK)
-      return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    except:
-      return Response(status=status.HTTP_404_NOT_FOUND)
-    
-  if(request.method == 'DELETE'):
-    try:
-      user_id = request.GET['user']
-      user = User.objects.get(pk=user_id)
-      user.delete()
-      return Response(status=status.HTTP_204_NO_CONTENT)
-    except:
-      return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = UserSerializer(user, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+      except:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    else:
+      users = User.objects.all() #traz todos os usuários
 
-
-
+      serializer = UserSerializer(users, many=True)
+      return Response(serializer.data)
+  return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'Erro ao buscar usuários'})
 
 
 #Movie
