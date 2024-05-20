@@ -1,7 +1,8 @@
 # Transformar o retorno em json para o frontend
 
 from rest_framework import serializers
-from .models import User, Movie, Genre, Rating
+from .models import Movie, Genre, Rating
+from django.contrib.auth.models import User
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
