@@ -149,11 +149,12 @@ def rate(request):
       print("Validation errors:", serializer.errors)
       return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-  elif(request.method == 'PUT'):
-    print('a')
-    id_rate = request.data.get('id')
-    rating = get_object_or_404(Rating, pk=id_rate)
-    serializer = RatingSerializer(rating, data=request.data)
+  if(request.method == 'PUT'):
+    user_id = request.GET.get('user')
+    movie_id = request.GET.get('movie')
+
+    rating = Rating.objects.get(movie_id=movie_id, user_id=user_id)
+    serializer = RatingSerializer(rating, data=request.data, partial=True)
     
     if serializer.is_valid():
       serializer.save()
@@ -165,30 +166,3 @@ def rate(request):
     
   else:
     return Response({"message": "Bad request"}, status=status.HTTP_400_BAD_REQUEST)
-  
-
-
-    # elif(request.method == 'POST'):
-  #   try:
-  #     new_rate = request.data
-  #     serializer = RatingSerializer(data=new_rate)
-  #     if(serializer.is_valid()):
-  #       serializer.save()
-  #       return Response(serializer.data, status=status.HTTP_201_CREATED)
-  #   except:
-  #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-  # elif(request.method == 'PUT'):
-  #   try:
-  #     user_id = request.GET.get('user')
-  #     movie_id = request.GET.get('movie')
-  #     new_rate = request.data
-  #     update_rating = Rating.objects.get(movie_id=movie_id, user_id=user_id)
-      
-  #     serializer = RatingSerializer(update_rating, data=new_rate)
-  #     # serializer = RatingSerializer(data=new_rate)
-  #     if(serializer.is_valid()):
-  #       serializer.save()
-  #       return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-  #   except:
-  #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
