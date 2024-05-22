@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, JsonResponse
 # Create your views here.
 
@@ -116,9 +116,9 @@ def genre_get(request):
   except:
     return Response(status=status.HTTP_404_NOT_FOUND)
   
-@api_view(['GET', 'POST', 'PUT'])
+@api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def rating(request):
+def rating_get(request):
   if(request.method == 'GET'):
     try:
       user_id = request.GET.get('user')
@@ -128,31 +128,67 @@ def rating(request):
       return Response({"rating": rating_data['rating']}, status=status.HTTP_200_OK)
     except:
       return Response(status=status.HTTP_404_NOT_FOUND) 
+  else: 
+    return Response(status=status.HTTP_400_BAD_REQUEST)
+  
 
-  elif(request.method == 'POST'):
-    try:
-      new_rate = request.data
-      serializer = RatingSerializer(data=new_rate)
-      if(serializer.is_valid()):
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    except:
+@api_view(['POST', 'PUT'])
+@permission_classes([IsAuthenticated])
+def rate(request):
+  print('Received data:', request)
+  
+  if request.method == 'POST':
+    new_rate = request.data
+    serializer = RatingSerializer(data=new_rate)
+    
+    if serializer.is_valid():
+      serializer.save()
+      print("Saved rating:", serializer.data)
+      return Response(serializer.data, status=status.HTTP_201_CREATED)
+    else:
+      print("Validation errors:", serializer.errors)
       return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
   elif(request.method == 'PUT'):
-    try:
-      user_id = request.GET.get('user')
-      movie_id = request.GET.get('movie')
-      new_rate = request.data
-      update_rating = Rating.objects.get(movie_id=movie_id, user_id=user_id)
-      
-      serializer = RatingSerializer(update_rating, data=new_rate)
-      # serializer = RatingSerializer(data=new_rate)
-      if(serializer.is_valid()):
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-    except:
+    print('a')
+    id_rate = request.data.get('id')
+    rating = get_object_or_404(Rating, pk=id_rate)
+    serializer = RatingSerializer(rating, data=request.data)
+    
+    if serializer.is_valid():
+      serializer.save()
+      print("Saved rating:", serializer.data)
+      return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+    else:
+      print("Validation errors:", serializer.errors)
       return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+  else:
+    return Response({"message": "Bad request"}, status=status.HTTP_400_BAD_REQUEST)
+  
 
-  else: 
-    return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    # elif(request.method == 'POST'):
+  #   try:
+  #     new_rate = request.data
+  #     serializer = RatingSerializer(data=new_rate)
+  #     if(serializer.is_valid()):
+  #       serializer.save()
+  #       return Response(serializer.data, status=status.HTTP_201_CREATED)
+  #   except:
+  #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+  # elif(request.method == 'PUT'):
+  #   try:
+  #     user_id = request.GET.get('user')
+  #     movie_id = request.GET.get('movie')
+  #     new_rate = request.data
+  #     update_rating = Rating.objects.get(movie_id=movie_id, user_id=user_id)
+      
+  #     serializer = RatingSerializer(update_rating, data=new_rate)
+  #     # serializer = RatingSerializer(data=new_rate)
+  #     if(serializer.is_valid()):
+  #       serializer.save()
+  #       return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+  #   except:
+  #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -5,6 +5,7 @@ import random
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from cloudinary.models import CloudinaryField
+from django.contrib.auth.models import User
 
 def upload_image(instance, filename):
     return f'{random.randint(0,100000)}/{filename}'
@@ -36,47 +37,47 @@ class UserManager(BaseUserManager):
 
         return self.create_user(email, password, **extra_fields)
 
-class User(AbstractBaseUser, PermissionsMixin):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100, default='')
-    email = models.EmailField(unique=True)
-    password = models.CharField(max_length=100)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+# class User(AbstractBaseUser, PermissionsMixin):
+#     id = models.AutoField(primary_key=True)
+#     name = models.CharField(max_length=100, default='')
+#     email = models.EmailField(unique=True)
+#     password = models.CharField(max_length=100)
+#     is_active = models.BooleanField(default=True)
+#     is_staff = models.BooleanField(default=False)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
 
-    # Ajuste aqui nos campos groups e user_permissions
-    groups = models.ManyToManyField(
-        'auth.Group',
-        verbose_name='groups',
-        blank=True,
-        help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
-        related_name="user_set_api_rest",  # Nome único para related_name
-        related_query_name="user",
-    )
-    user_permissions = models.ManyToManyField(
-        'auth.Permission',
-        verbose_name='user permissions',
-        blank=True,
-        help_text='Specific permissions for this user.',
-        related_name="user_set_api_rest",  # Nome único para related_name
-        related_query_name="user",
-    )
+#     # Ajuste aqui nos campos groups e user_permissions
+#     groups = models.ManyToManyField(
+#         'auth.Group',
+#         verbose_name='groups',
+#         blank=True,
+#         help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
+#         related_name="user_set_api_rest",  # Nome único para related_name
+#         related_query_name="user",
+#     )
+#     user_permissions = models.ManyToManyField(
+#         'auth.Permission',
+#         verbose_name='user permissions',
+#         blank=True,
+#         help_text='Specific permissions for this user.',
+#         related_name="user_set_api_rest",  # Nome único para related_name
+#         related_query_name="user",
+#     )
 
-    objects = UserManager()
+#     objects = UserManager()
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name']
+#     USERNAME_FIELD = 'email'
+#     REQUIRED_FIELDS = ['name']
 
-    def __str__(self):
-        return f'Nickname {self.name} - Email {self.email} - id {self.id}'
+#     def __str__(self):
+#         return f'Nickname {self.name} - Email {self.email} - id {self.id}'
 
-    def get_full_name(self):
-        return self.name
+#     def get_full_name(self):
+#         return self.name
 
-    def get_short_name(self):
-        return self.name
+#     def get_short_name(self):
+#         return self.name
 
 class Genre(models.Model):
     id = models.AutoField(primary_key=True)
