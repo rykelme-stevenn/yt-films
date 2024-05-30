@@ -100,6 +100,7 @@ class Movie(models.Model):
     production = models.CharField(max_length=100)
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
     image = CloudinaryField('image', null=True, blank=True)
+    accept = models.BooleanField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

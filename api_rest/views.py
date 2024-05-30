@@ -48,7 +48,7 @@ def user_get(request):
   return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'Erro ao buscar usuários'})
 
 
-#Movie
+#Movie ===============================================================================================
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -70,6 +70,29 @@ def movie_create(request):
   
   return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def movie_permission(request):
+  if request.method == 'PUT':
+    try:
+      movie_id = request.GET.get('movie')
+      movie = Movie.objects.get(pk=movie_id)
+      if(request.data['accept'] == True):
+        serializer = MovieSerializer(movie, data=request.data, partial=True)
+        if serializer.is_valid():
+          serializer.save()
+          print("Saved movie:", serializer.data)
+          return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+      else:
+        movie_id = request.GET.get('movie')
+        movie = Movie.objects.get(pk=movie_id)
+        movie.delete()
+        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+    except:
+      return Response(status=status.HTTP_404_NOT_FOUND)  
+  else:
+    return Response(status=status.HTTP_400_BAD_REQUEST)  
+
 @api_view(['GET'])
 def movie_get(request):
   try:
@@ -81,8 +104,7 @@ def movie_get(request):
     return Response(status=status.HTTP_404_NOT_FOUND)  
 
 
-
-#Genre
+#Genre ===============================================================================================
 
 @api_view(['POST', 'GET'])
 @permission_classes([IsAuthenticated])
@@ -116,6 +138,8 @@ def genre_get(request):
   except:
     return Response(status=status.HTTP_404_NOT_FOUND)
   
+
+# Rating ===============================================================================================
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def rating_get(request):
@@ -166,3 +190,4 @@ def rate(request):
     
   else:
     return Response({"message": "Bad request"}, status=status.HTTP_400_BAD_REQUEST)
+    
