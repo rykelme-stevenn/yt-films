@@ -81,8 +81,7 @@ def movie_permission(request):
         serializer = MovieSerializer(movie, data=request.data, partial=True)
         if serializer.is_valid():
           serializer.save()
-          print("Saved movie:", serializer.data)
-          return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+          return Response(status=status.HTTP_202_ACCEPTED)
       else:
         movie_id = request.GET.get('movie')
         movie = Movie.objects.get(pk=movie_id)
@@ -138,6 +137,16 @@ def genre_get(request):
   except:
     return Response(status=status.HTTP_404_NOT_FOUND)
   
+@api_view(['GET'])
+def only_genre_get(request):
+  try:
+    if(request.method == 'GET'):
+      genres = Genre.objects.all()
+      genre_data = GenreSerializer(genres, many=True).data
+      return Response(genre_data, status=status.HTTP_200_OK)
+  except:
+    return Response(status=status.HTTP_404_NOT_FOUND)
+
 
 # Rating ===============================================================================================
 @api_view(['GET'])

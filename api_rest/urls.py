@@ -10,6 +10,7 @@ urlpatterns = [
   path('movie_permission/', views.movie_permission, name="movie_permission"),
   path('genre_create/', views.genre_create, name="genre_create"),
   path('genre_get/', views.genre_get, name="genre_get"),
+  path('only_genre_get/', views.only_genre_get, name="only_genre_get"),
   path('rating_get/', views.rating_get, name="rating_get"),
   path('rate/', views.rate, name="rate")
 ]
